@@ -1,0 +1,24 @@
+language: java
+
+jenkins:
+  pipeline_jenkinsfile: Jenkinsfile
+  collect:
+    artifacts: target/*.class
+  stages:
+    stage('PR Example'):
+      when:
+        allOf:  
+          environment name: 'CHANGE ID'
+          value: 'CHANGE_ID'
+          branch: ${{CF_BRANCH}}
+
+    steps:
+      buildapp:
+        description: 'Build app'
+        type: shell
+        shell: javac simpletest.java
+
+      runapp:         
+        description: 'Run app'
+        type: shell
+        shell: java simpletest
