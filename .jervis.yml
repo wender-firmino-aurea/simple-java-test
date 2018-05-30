@@ -19,8 +19,8 @@ before_script:
   - echo "this is before script section"
 
 script:
-  - javac simple-java-test.java
-  - java simple-java-test
+  - echo "this is the script section"
+  
 
 after_success:
   - echo "yaaaaaay succeeded .. everything is working fine now "
