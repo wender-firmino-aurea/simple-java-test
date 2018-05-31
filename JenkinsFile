@@ -11,8 +11,7 @@ pipeline {
 }
 
 
-
-job('example') {
+job('test') {
     scm {
         git {
             remote {
@@ -23,32 +22,30 @@ job('example') {
         }
     }
     triggers {
-        githubPullRequest {
-            admin('wender-firmino-aurea')
-            admins([''])
-            userWhitelist('you@you.com')
-            userWhitelist(['me@me.com', 'they@they.com'])
-            orgWhitelist('')
-            orgWhitelist([''])
-            cron('* * * *')
-            triggerPhrase('OK to test')
-            onlyTriggerPhrase()
-            useGitHubHooks()
+        githubPullRequest {           
+            cron('* * * * *')
+            triggerPhrase()
+            onlyTriggerPhrase('false')
+            useGitHubHooks('false')
             permitAll()
             autoCloseFailedPullRequests()
             allowMembersOfWhitelistedOrgsAsAdmin()
             extensions {
                 commitStatus {
-                    context('deploy to staging site')
-                    triggeredStatus('starting deployment to staging site...')
-                    startedStatus('deploying to staging site...')
-                    statusUrl('')
-                    completedStatus('SUCCESS', 'All is well')
-                    completedStatus('FAILURE', 'Something went wrong. Investigate!')
-                    completedStatus('PENDING', 'still in progress...')
-                    completedStatus('ERROR', 'Something went really wrong. Investigate!')
+                    context()
+                    triggeredStatus()
+                    startedStatus()
+                    statusUrl()
+		    addTestResults('false')
                 }
             }
+        }
+    }
+    concurrentBuild('false')
+    builders{
+	shell{
+	  command('javac simplejavatest.java')
+	  command('java simplejavatest')
         }
     }
 }
