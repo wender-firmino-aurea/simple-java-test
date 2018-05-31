@@ -1,0 +1,54 @@
+pipeline {
+   agent any    
+   stage('Test App') {
+            steps {
+                sh """
+                    javac simplejavatest.java
+                    java 
+                """
+            }
+    }
+}
+
+
+
+job('example') {
+    scm {
+        git {
+            remote {
+                github('wender-firmino-aurea/simple-java-test')
+                refspec('+refs/pull/*:refs/remotes/origin/pr/*')
+            }
+            branch('${sha1}')
+        }
+    }
+    triggers {
+        githubPullRequest {
+            admin('wender-firmino-aurea')
+            admins([''])
+            userWhitelist('you@you.com')
+            userWhitelist(['me@me.com', 'they@they.com'])
+            orgWhitelist('')
+            orgWhitelist([''])
+            cron('* * * *')
+            triggerPhrase('OK to test')
+            onlyTriggerPhrase()
+            useGitHubHooks()
+            permitAll()
+            autoCloseFailedPullRequests()
+            allowMembersOfWhitelistedOrgsAsAdmin()
+            extensions {
+                commitStatus {
+                    context('deploy to staging site')
+                    triggeredStatus('starting deployment to staging site...')
+                    startedStatus('deploying to staging site...')
+                    statusUrl('')
+                    completedStatus('SUCCESS', 'All is well')
+                    completedStatus('FAILURE', 'Something went wrong. Investigate!')
+                    completedStatus('PENDING', 'still in progress...')
+                    completedStatus('ERROR', 'Something went really wrong. Investigate!')
+                }
+            }
+        }
+    }
+}
